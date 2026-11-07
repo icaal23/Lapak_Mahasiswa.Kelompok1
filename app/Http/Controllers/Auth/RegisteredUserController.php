@@ -32,12 +32,19 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'nim' => ['required', 'string', 'max:20', 'unique:'.User::class],
+            'program_studi' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Rules\Password::min(8)],
+            'setuju' => ['accepted'],
+        ], [
+        'setuju.accepted' => 'Kamu harus menyetujui ketentuan Lapak Kampus.',
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'nim' => $request->nim,
+            'program_studi' => $request->program_studi,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

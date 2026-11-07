@@ -141,7 +141,7 @@
             <h2 class="max-w-md text-3xl font-bold leading-tight">Punya barang yang sudah tidak dipakai?</h2>
             <p class="mt-2 max-w-md text-sm">Foto, unggah, dan tawarkan ke ribuan mahasiswa satu kampus hari ini juga.</p>
         </div>
-        <a href="#" class="rounded-full bg-brand px-10 py-5 text-sm font-bold text-white">Daftar dan Mulai Jualan</a>
+        <a href="{{ route('register') }}" class="rounded-full bg-brand px-10 py-5 text-sm font-bold text-white">Daftar dan Mulai Jualan</a>
     </section>
 </div>
 @endsection

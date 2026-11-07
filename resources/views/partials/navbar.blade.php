@@ -13,8 +13,8 @@
         </nav>
 
         <div class="flex items-center gap-3">
-            <a href="#" class="rounded-full border border-neutral-600 px-4 py-1.5 text-xl font-semibold text-neutral-800">Masuk</a>
-            <a href="#" class="rounded-full bg-brand px-4 py-1.5 text-xl font-semibold text-white">Daftar</a>
+            <a href="{{ route('login') }}" class="rounded-full border border-neutral-600 px-4 py-1.5 text-xl font-semibold text-neutral-800">Masuk</a>
+            <a href="{{ route('register') }}" class="rounded-full bg-brand px-4 py-1.5 text-xl font-semibold text-white">Daftar</a>
             <button type="button" class="ml-4 text-neutral-700" aria-label="Menu">
                 <x-icon name="menu" class="size-7" />
             </button>
