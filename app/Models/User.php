@@ -22,6 +22,8 @@ class User extends Authenticatable
         'nim',
         'program_studi',
         'email',
+        'no_whatsapp',
+        'lokasi_ambil',
         'password',
     ];
 
