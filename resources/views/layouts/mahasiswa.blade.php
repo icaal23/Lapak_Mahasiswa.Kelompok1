@@ -13,8 +13,8 @@
     $menu = [
         ['Beranda',            'home',      route('dashboard'),     request()->routeIs('dashboard')],
         ['Tambah Barang', 'tambah', route('barang.create'), request()->routeIs('barang.create')],
-        ['Barang Saya', 'tag', route('barang.index'), request()->routeIs('barang.index', 'barang.edit')],
-        ['Laporan Pendapatan', 'chart',     '#',                    false],
+        ['Barang Saya', 'tag', route('barang.index'), request()->routeIs('barang.index', 'barang.edit', 'barang.terjual.*')],
+        ['Laporan Pendapatan', 'chart',     route('laporan.index'), request()->routeIs('laporan.*')],
         ['Chat Wa',            'chat',      '#',                    false],
         ['Keranjang',          'keranjang', '#',                    false],
         ['Profil',             'user',      route('profile.edit'),  request()->routeIs('profile.*')],
