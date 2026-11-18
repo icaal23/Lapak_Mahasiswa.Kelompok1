@@ -15,7 +15,7 @@
         ['Tambah Barang', 'tambah', route('barang.create'), request()->routeIs('barang.create')],
         ['Barang Saya', 'tag', route('barang.index'), request()->routeIs('barang.index', 'barang.edit')],
         ['Laporan Pendapatan', 'chart',     '#',                    false],
-        ['Chat Wa',            'chat',      '#',                    false],
+        ['Chat Wa', 'chat', route('chat.index'), request()->routeIs('chat.index')],
         ['Keranjang',          'keranjang', '#',                    false],
         ['Profil',             'user',      route('profile.edit'),  request()->routeIs('profile.*')],
     ];
