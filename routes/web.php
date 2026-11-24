@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -8,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ChatWaController;
+use App\Http\Controllers\AuthController;
 
 
 // ==========================================
@@ -17,21 +17,36 @@ use App\Http\Controllers\ChatWaController;
 Route::get('/', [BerandaController::class, 'index'])
     ->name('beranda');
 
-
-// ==========================================
-// HALAMAN DASHBOARD
-// ==========================================
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('dashboard');
+Route::redirect('/home', '/')->name('home');
 
 
 // ==========================================
-// ROUTE YANG MEMERLUKAN LOGIN
+// ROUTE LOGIN KUSTOM & ADMIN LAPAK KAMPUS
+// ==========================================
+
+Route::middleware('guest')->group(function () {
+    // Login Mahasiswa (Lapak Kampus)
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+
+    // Login Admin Kampus
+    Route::get('/admin/login', [AuthController::class, 'showAdminLoginForm'])->name('admin.login');
+    Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin.login.process');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
+
+
+// ==========================================
+// HALAMAN DASHBOARD & ROUTE TERPROTEKSI LOGIN
 // ==========================================
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     // --------------------------------------
     // MANAJEMEN BARANG
@@ -55,7 +70,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])
         ->name('barang.destroy');
 
-
     // --------------------------------------
     // MANAJEMEN PROFIL
     // --------------------------------------
@@ -68,7 +82,6 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
-
 
     // --------------------------------------
     // FITUR CHAT WHATSAPP
@@ -86,7 +99,7 @@ Route::middleware('auth')->group(function () {
 
 
 // ==========================================
-// ROUTE AUTENTIKASI LARAVEL
+// ROUTE AUTENTIKASI LARAVEL (REGISTER, RESET PASSWORD, DLL.)
 // ==========================================
 
 require __DIR__.'/auth.php';
