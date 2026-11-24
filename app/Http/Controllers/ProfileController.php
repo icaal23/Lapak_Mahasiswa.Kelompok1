@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,31 +12,42 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    private function resolveUser(Request $request): ?User
+    {
+        return $request->user() ?? User::query()->first();
+    }
+
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $this->resolveUser($request),
         ]);
     }
 
     /**
      * Update the user's profile information.
      */
-   public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-    $user = $request->user();
-    $user->fill($request->validated());
+        $user = $this->resolveUser($request);
 
-    if ($user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
+        if (! $user) {
+            return Redirect::route('profile.edit')
+                ->with('sukses', 'Perubahan profil disimulasikan (mode presentasi).');
+        }
 
-    $user->save();
+        $user->fill($request->validated());
 
-    return Redirect::route('profile.edit')->with('sukses', 'Profil berhasil diperbarui.');
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('sukses', 'Profil berhasil diperbarui.');
     }
 
     /**
@@ -43,11 +55,16 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = $request->user();
+
+        if (! $user) {
+            return Redirect::route('profile.edit')
+                ->with('sukses', 'Aksi hapus akun dinonaktifkan pada mode presentasi.');
+        }
+
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);
-
-        $user = $request->user();
 
         Auth::logout();
 

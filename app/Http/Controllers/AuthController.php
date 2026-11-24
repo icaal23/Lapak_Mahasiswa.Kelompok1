@@ -9,12 +9,11 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('auth.login', ['isAdmin' => false]);
     }
 
     public function login(Request $request)
     {
-        // Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -24,12 +23,18 @@ class AuthController extends Controller
             'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        // Fitur "Ingatkan saya" (Remember Me)
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+            $request->session()->forget('url.intended');
+
+            // Jika yang login adalah akun admin, arahkan langsung ke ringkasan admin
+            if ($this->isAdminUser(Auth::user())) {
+                return redirect()->route('admin.ringkasan');
+            }
+
+            return redirect()->route('dashboard');
         }
 
         return back()->withErrors([
@@ -39,7 +44,6 @@ class AuthController extends Controller
 
     public function showAdminLoginForm()
     {
-        // Menggunakan view yang sama dengan parameter mode admin
         return view('auth.login', ['isAdmin' => true]);
     }
 
@@ -48,15 +52,30 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Email admin wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            // Opsional: Cek jika user memiliki role admin
-            // if (Auth::user()->role !== 'admin') { ... }
             $request->session()->regenerate();
-            return redirect()->intended('/admin/dashboard');
+            $request->session()->forget('url.intended');
+
+            // Aktifkan blok ini jika kamu ingin membatasi login /admin/login hanya untuk akun admin:
+            // if (! $this->isAdminUser(Auth::user())) {
+            //     Auth::logout();
+            //     $request->session()->invalidate();
+            //     $request->session()->regenerateToken();
+            //
+            //     return back()->withErrors([
+            //         'email' => 'Akun ini bukan akun admin.',
+            //     ])->onlyInput('email');
+            // }
+
+            return redirect()->route('admin.ringkasan');
         }
 
         return back()->withErrors([
@@ -69,6 +88,20 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
+    }
+
+    protected function isAdminUser($user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if (isset($user->role) && strtolower((string) $user->role) === 'admin') {
+            return true;
+        }
+
+        return strtolower((string) $user->email) === 'admin@kampus.ac.id';
     }
 }

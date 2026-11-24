@@ -17,22 +17,25 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'name' => ['required', 'string', 'max:255'],
-        'program_studi' => ['required', 'string', 'max:100'],
-        'email' => [
-            'required', 'string', 'lowercase', 'email', 'max:255',
-            Rule::unique(User::class)->ignore($this->user()->id),
-        ],
-        'no_whatsapp' => ['nullable', 'regex:/^[0-9+\s-]{8,20}$/'],
-        'lokasi_ambil' => ['nullable', 'string', 'max:255'],
-    ];
-}
-
-public function messages(): array
-{
-    return [
-        'no_whatsapp.regex' => 'Nomor WhatsApp hanya boleh berisi angka, spasi, tanda + atau -, 8 sampai 20 karakter.',
-    ];
-}
+            'name' => ['required', 'string', 'max:255'],
+            'program_studi' => ['required', 'string', 'max:100'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()?->id),
+            ],
+            'no_whatsapp' => ['nullable', 'regex:/^[0-9+\s-]{8,20}$/'],
+            'lokasi_ambil' => ['nullable', 'string', 'max:255'],
+        ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'no_whatsapp.regex' => 'Nomor WhatsApp hanya boleh berisi angka, spasi, tanda + atau -, 8 sampai 20 karakter.',
+        ];
+    }
+}
