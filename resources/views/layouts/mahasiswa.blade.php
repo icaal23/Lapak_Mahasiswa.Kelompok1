@@ -11,15 +11,21 @@
 <body class="bg-page font-sans antialiased">
 @php
     $menu = [
-        ['Beranda',            'home',      route('dashboard'),     request()->routeIs('dashboard')],
-        ['Tambah Barang', 'tambah', route('barang.create'), request()->routeIs('barang.create')],
-        ['Barang Saya', 'tag', route('barang.index'), request()->routeIs('barang.index', 'barang.edit')],
-        ['Laporan Pendapatan', 'chart',     '#',                    false],
-        ['Chat Wa', 'chat', route('chat.index'), request()->routeIs('chat.index')],
-        ['Keranjang',          'keranjang', '#',                    false],
-        ['Profil',             'user',      route('profile.edit'),  request()->routeIs('profile.*')],
+        ['Beranda',            'home',      route('dashboard'),          request()->routeIs('dashboard')],
+        ['Tambah Barang',      'tambah',    route('barang.create'),      request()->routeIs('barang.create')],
+        ['Barang Saya',        'tag',       route('barang.index'),       request()->routeIs('barang.index', 'barang.edit')],
+        ['Laporan Pendapatan', 'chart',     route('laporan.pendapatan'), request()->routeIs('laporan.pendapatan')],
+        ['Chat Wa',            'chat',      route('chat.index'),         request()->routeIs('chat.index')],
+        ['Keranjang',          'keranjang', route('keranjang.index'),    request()->routeIs('keranjang.*')],
+        ['Profil',             'user',      route('profile.edit'),       request()->routeIs('profile.*')],
     ];
-    $inisial = collect(explode(' ', Auth::user()->name))->map(fn ($n) => strtoupper(mb_substr($n, 0, 1)))->take(2)->implode('');
+
+    $namaUser = Auth::user()?->name ?: 'Mahasiswa';
+    $inisial = collect(explode(' ', trim($namaUser)))
+        ->filter()
+        ->map(fn ($n) => strtoupper(mb_substr($n, 0, 1)))
+        ->take(2)
+        ->implode('') ?: 'MT';
 @endphp
 
 <div class="flex min-h-screen">

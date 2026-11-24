@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $greetingName = Auth::user()?->name ?: 'Mahasiswa';
         $kategoriList = ['Semua', 'Buku', 'Elektronik', 'Pakaian', 'Perlengkapan Kuliah', 'Lainnya'];
 
         $tema = [
@@ -37,6 +39,6 @@ class DashboardController extends Controller
             ->when($q !== '', fn ($c) => $c->filter(fn ($b) => str_contains(strtolower($b['nama']), strtolower($q))))
             ->values();
 
-        return view('dashboard', compact('kategoriList', 'barang', 'aktif', 'q'));
+        return view('dashboard', compact('greetingName', 'kategoriList', 'barang', 'aktif', 'q'));
     }
 }

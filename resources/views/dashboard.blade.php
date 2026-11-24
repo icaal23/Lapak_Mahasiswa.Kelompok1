@@ -3,7 +3,7 @@
 @section('title', 'Beranda - Lapak Kampus')
 
 @section('content')
-    <h1 class="text-4xl font-extrabold">Halo, {{ Auth::user()->name }}</h1>
+    <h1 class="text-4xl font-extrabold">Halo, {{ $greetingName ?? 'Mahasiswa' }}</h1>
     <p class="mt-3 text-lg">Ini barang-barang terbaru di lapak kampusmu hari ini.</p>
 
     {{-- Filter kategori --}}

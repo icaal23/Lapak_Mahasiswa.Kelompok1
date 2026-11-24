@@ -114,7 +114,7 @@
                 {{-- Lokasi --}}
                 <div>
                     <label for="lokasi" class="block text-xl font-semibold text-neutral-500">Lokasi Ambil Barang</label>
-                    <input id="lokasi" name="lokasi" type="text" value="{{ old('lokasi', Auth::user()->lokasi_ambil) }}"" placeholder="Contoh: Perpustakaan"
+                    <input id="lokasi" name="lokasi" type="text" value="{{ old('lokasi', Auth::user()?->lokasi_ambil) }}" placeholder="Contoh: Perpustakaan"
                            class="mt-3 w-full rounded-2xl border border-neutral-400 px-5 py-4 text-lg focus:border-brand focus:ring-brand">
                     @error('lokasi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>

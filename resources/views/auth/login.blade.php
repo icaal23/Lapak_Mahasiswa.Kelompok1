@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ isset($isAdmin) && $isAdmin ? 'Masuk Admin - Lapak Kampus' : 'Masuk - Lapak Kampus' }}</title>
+    <title>{{ !empty($isAdmin) ? 'Masuk Admin - Lapak Kampus' : 'Masuk - Lapak Kampus' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -34,6 +34,10 @@
     </style>
 </head>
 <body class="bg-gray-lapak min-h-dvh w-full overflow-x-hidden antialiased">
+
+    @php
+        $adminMode = !empty($isAdmin);
+    @endphp
 
     <!-- Container Responsif (1 kolom di HP/tablet kecil, 2 kolom penuh dari md ke atas) -->
     <div class="w-full min-h-dvh grid grid-cols-1 md:grid-cols-2">
@@ -96,10 +100,10 @@
 
                 <!-- Heading -->
                 <h2 class="text-2xl sm:text-[26px] lg:text-3xl font-bold text-black tracking-tight">
-                    {{ isset($isAdmin) && $isAdmin ? 'Masuk ke akun Admin' : 'Masuk ke akunmu' }}
+                    {{ $adminMode ? 'Masuk ke akun Admin' : 'Masuk ke akunmu' }}
                 </h2>
                 <p class="text-xs sm:text-sm text-gray-500 mt-1.5">
-                    {{ isset($isAdmin) && $isAdmin ? 'Gunakan kredensial administrator kampus yang terdaftar.' : 'Gunakan email kampus yang sudah terdaftar.' }}
+                    {{ $adminMode ? 'Gunakan kredensial administrator kampus yang terdaftar.' : 'Gunakan email kampus yang sudah terdaftar.' }}
                 </p>
 
                 <!-- Alert Error Validasi -->
@@ -121,7 +125,7 @@
                 @endif
 
                 <!-- Form Login -->
-                <form id="loginForm" method="POST" action="{{ isset($isAdmin) && $isAdmin ? url('/admin/login') : url('/login') }}" class="mt-6 sm:mt-7 space-y-4 sm:space-y-5">
+                <form id="loginForm" method="POST" action="{{ $adminMode ? route('admin.login.process') : route('login.process') }}" class="mt-6 sm:mt-7 space-y-4 sm:space-y-5">
                     @csrf
 
                     <!-- Input Email -->
@@ -134,7 +138,7 @@
                             id="email" 
                             name="email" 
                             value="{{ old('email') }}"
-                            placeholder="namamahasiswa@gmail.com" 
+                            placeholder="{{ $adminMode ? 'admin@kampus.ac.id' : 'namamahasiswa@gmail.com' }}" 
                             required 
                             autofocus
                             class="w-full bg-white text-gray-800 text-sm sm:text-[15px] px-4 py-3 sm:py-3.5 rounded-xl border border-gray-400 focus:outline-none focus:border-[#030058] focus:ring-1 focus:ring-[#030058] placeholder-gray-400 transition-all"
@@ -200,20 +204,22 @@
                 </button>
 
                 <div class="mt-4 text-center space-y-2 text-xs sm:text-sm">
-                    <p class="text-gray-500">
-                        Belum punya akun? 
-                        <a href="{{ url('/register') }}" class="font-semibold text-red-500 hover:text-red-600 transition-colors">
-                            Daftar sekarang
-                        </a>
-                    </p>
+                    @unless ($adminMode)
+                        <p class="text-gray-500">
+                            Belum punya akun? 
+                            <a href="{{ url('/register') }}" class="font-semibold text-red-500 hover:text-red-600 transition-colors">
+                                Daftar sekarang
+                            </a>
+                        </p>
+                    @endunless
 
                     <div>
-                        @if(isset($isAdmin) && $isAdmin)
-                            <a href="{{ url('/login') }}" class="text-gray-500 hover:text-gray-800 font-medium transition-colors">
+                        @if ($adminMode)
+                            <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-800 font-medium transition-colors">
                                 Masuk sebagai mahasiswa
                             </a>
                         @else
-                            <a href="{{ url('/admin/login') }}" class="text-gray-500 hover:text-gray-800 font-medium transition-colors">
+                            <a href="{{ route('admin.login') }}" class="text-gray-500 hover:text-gray-800 font-medium transition-colors">
                                 Masuk sebagai admin kampus
                             </a>
                         @endif
