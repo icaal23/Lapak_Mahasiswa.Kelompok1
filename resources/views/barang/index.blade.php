@@ -73,6 +73,12 @@
                         </td>
                         <td class="py-5">
                             <div class="flex gap-2">
+                                @if ($b->status === 'aktif')
+                                    <a href="{{ route('barang.terjual.create', $b) }}" aria-label="Tandai terjual" title="Tandai terjual"
+                                       class="flex h-9 w-14 items-center justify-center rounded-full border border-green-600 text-green-700 hover:bg-white">
+                                        <x-icon name="centang" class="size-4" />
+                                    </a>
+                                @endif
                                 <a href="{{ route('barang.edit', $b) }}" aria-label="Ubah"
                                    class="flex h-9 w-14 items-center justify-center rounded-full border border-neutral-500 text-navy hover:bg-white">
                                     <x-icon name="pensil" class="size-4" />

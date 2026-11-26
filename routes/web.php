@@ -14,6 +14,9 @@ use App\Http\Controllers\Admin\AdminModerasiController;
 use App\Http\Controllers\Admin\AdminPenggunaController;
 use App\Http\Controllers\Admin\AdminLaporanController;
 
+use App\Http\Controllers\LaporanPendapatanController;
+use App\Http\Controllers\PenjualanController;
+
 
 // ==========================================
 // HALAMAN UTAMA (PUBLIK)
@@ -40,6 +43,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/barang/tambah', [BarangController::class, 'create'])
     ->name('barang.create');
 
+// --------------------------------------
+// BARANG
+// --------------------------------------
+
 Route::post('/barang', [BarangController::class, 'store'])
     ->name('barang.store');
 
@@ -56,38 +63,25 @@ Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])
     ->name('barang.destroy');
 
 // --------------------------------------
+// TANDAI BARANG TERJUAL
+// --------------------------------------
+
+Route::get('/barang/{barang}/terjual', [PenjualanController::class, 'create'])
+    ->name('barang.terjual.create');
+
+Route::post('/barang/{barang}/terjual', [PenjualanController::class, 'store'])
+    ->name('barang.terjual.store');
+
+// --------------------------------------
 // LAPORAN PENDAPATAN
 // --------------------------------------
 
-Route::get('/laporan-pendapatan', function () {
-    $ringkasan = [
-        'total_pendapatan'  => 3650000,
-        'barang_terjual'    => 2,
-        'barang_aktif'      => 4,
-        'menunggu_moderasi' => 2,
-    ];
+Route::get('/laporan-pendapatan', [LaporanPendapatanController::class, 'index'])
+    ->name('laporan.pendapatan');
 
-    $riwayat = [
-        [
-            'tanggal'  => '20 Nov 2026',
-            'barang'   => 'Laptop Lenovo',
-            'kategori' => 'Elektronik',
-            'pembeli'  => 'Muhammad Faisal',
-            'harga'    => 3500000,
-            'status'   => 'Selesai',
-        ],
-        [
-            'tanggal'  => '15 Nov 2026',
-            'barang'   => 'Almamater Unsulbar',
-            'kategori' => 'Pakaian',
-            'pembeli'  => 'Mutmainnah Talib',
-            'harga'    => 150000,
-            'status'   => 'Selesai',
-        ],
-    ];
-
-    return view('laporan.pendapatan', compact('ringkasan', 'riwayat'));
-})->name('laporan.pendapatan');
+// Alias untuk route yang digunakan branch teman
+Route::get('/laporan', [LaporanPendapatanController::class, 'index'])
+    ->name('laporan.index');
 
 // --------------------------------------
 // KERANJANG
@@ -135,26 +129,22 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])
 // FITUR CHAT WHATSAPP
 // --------------------------------------
 
-// Menampilkan daftar percakapan
 Route::get('/chat', [ChatWaController::class, 'index'])
     ->name('chat.index');
 
-// Memulai percakapan dengan penjual
 Route::get('/chat/mulai/{barang_id}', [ChatWaController::class, 'mulaiChat'])
     ->name('chat.mulai');
 
-
 // ==========================================
-// HALAMAN ADMIN LAPAK KAMPUS (RINGKASAN & MENU SAMPING)
+// HALAMAN ADMIN LAPAK KAMPUS
 // ==========================================
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+
     Route::get('/ringkasan', [AdminDashboardController::class, 'index'])
         ->name('ringkasan');
 
-    // --------------------------------------
-    // KELOLA BARANG (ADMIN)
-    // --------------------------------------
+    // KELOLA BARANG
     Route::get('/kelola-barang', [AdminBarangController::class, 'index'])
         ->name('barang.index');
 
@@ -170,9 +160,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         ->whereNumber('id')
         ->name('barang.destroy');
 
-    // --------------------------------------
-    // MODERASI BARANG (ADMIN)
-    // --------------------------------------
+    // MODERASI BARANG
     Route::get('/moderasi-barang', [AdminModerasiController::class, 'index'])
         ->name('moderasi.index');
 
@@ -184,9 +172,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         ->whereNumber('id')
         ->name('moderasi.reject');
 
-    // --------------------------------------
-    // KELOLA PENGGUNA (ADMIN)
-    // --------------------------------------
+    // KELOLA PENGGUNA
     Route::get('/kelola-pengguna', [AdminPenggunaController::class, 'index'])
         ->name('pengguna.index');
 
@@ -194,9 +180,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         ->whereNumber('id')
         ->name('pengguna.toggle');
 
-    // --------------------------------------
-    // LAPORAN (ADMIN)
-    // --------------------------------------
+    // LAPORAN ADMIN
     Route::get('/laporan', [AdminLaporanController::class, 'index'])
         ->name('laporan.index');
 
@@ -207,7 +191,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/laporan/{id}/tolak', [AdminLaporanController::class, 'reject'])
         ->whereNumber('id')
         ->name('laporan.reject');
+
 });
+
 
 
 // ==========================================
